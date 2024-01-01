@@ -1,5 +1,6 @@
 {
   "[helm]": {
     "editor.formatOnSave": false
-  }
+  },
+  "conventionalCommits.scopes": ["gluetun"]
 }
