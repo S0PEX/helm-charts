@@ -1,0 +1,19 @@
+image:
+  repository: ghcr.io/qdm12/gluetun
+  pullPolicy: IfNotPresent
+  tag: "v3.36"
+
+volume:
+  name: gluetun-config
+
+secret:
+  name: gluetun-credentials
+
+env:
+  normal:
+    TZ: "Europe/Berlin"
+    VPN_SERVICE_PROVIDER: "perfect privacy"
+    SERVER_CITIES: "Amsterdam"
+  secret:
+    OPENVPN_USER: ""
+    OPENVPN_PASSWORD: ""

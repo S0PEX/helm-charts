@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gluetun.fullname" . }}
+  labels: 
+    {{- include "gluetun.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {{- include "gluetun.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels: {{- include "gluetun.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- include "helpers.list-env-variables" . | indent 12 }}
+          volumeMounts:
+            - name: {{ .Values.volume.name }}
+              mountPath: /gluetun
+      volumes:
+        - name: {{ .Values.volume.name }}
+          persistentVolumeClaim:
+            claimName: "pvc-{{ .Values.volume.name }}"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.secret.name }}
+type: Opaque
+data:
+  {{- range $key, $val := .Values.env.secret }}
+  {{ $key }}: {{ $val | b64enc }}
+  {{- end}}
